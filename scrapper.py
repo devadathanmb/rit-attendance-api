@@ -1,6 +1,6 @@
+from fastapi import HTTPException
 import requests
 from bs4 import BeautifulSoup
-import json
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
@@ -10,7 +10,10 @@ class Scrapper():
     def login(self, username, password):
         login_url = "http://rit.ac.in/ritsoft/ritsoftv2/login.php"
         login_payload = {"username" : username, "password" : password, "login" : "Login"}
-        response_cookie = requests.post(login_url, login_payload).cookies["PHPSESSID"]
+        try:
+            response_cookie = requests.post(login_url, login_payload).cookies["PHPSESSID"]
+        except requests.Timeout:
+            raise HTTPException(status_code=500, detail="RIT Soft server timed out. Try again later")
         return response_cookie
     
     # Scrape the attendance data
@@ -24,13 +27,14 @@ class Scrapper():
         soup = BeautifulSoup(html_page, "html.parser")
 
         if soup.script.string == "alert('Session Expired!!! Please login')" :
-            print("Invalid username or password")
-            response_json["error"] = "Invalid username or password"
-            return response_json
+            raise HTTPException(status_code=401, detail="Invalid username or password")
         else:
             name = soup.find("table").find_all("td")[0].string
             admission_no = soup.find("table").find_all("td")[1].string
             course_name = soup.find("table").find_all("td")[2].string
+
+            if None in (name, admission_no, course_name):
+                raise HTTPException(status_code=404, detail="Could not find data.")
 
             response_json["name"] = name
             response_json["admission_no"] = admission_no
@@ -45,6 +49,9 @@ class Scrapper():
                 present_hours = rows[i].find_all("td")[2].text
                 percentage = rows[i].find_all("td")[3].text
                 subject_attendance.append({"subject_name" : subject_name, "subject_code" : subject_code, "total_hours" : total_hours, "present_hours" : present_hours, "percentage" : percentage})
+
+            if not subject_attendance:
+                raise HTTPException(status_code=404, detail="No attendance record found")
 
             total_attendance = rows[len(rows) - 1].find_all("td")[1].string
             response_json["subject_attendance"] = subject_attendance
