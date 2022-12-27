@@ -17,17 +17,28 @@ class Scrapper():
         return response_cookie
     
     # Scrape the attendance data
-    def scrapedata(self, cookie):
+    def scrape_attendance(self, cookie, starting_date, ending_date):
+
+        if starting_date == None and ending_date == None:
+            ending_date = date.today()
+            starting_date = date.today() + relativedelta(months=-6)
+        if ending_date == None:
+            ending_date = date.today()
+        elif starting_date == None:
+            starting_date = date.today() + relativedelta(months=-6)
+
         response_json = {}
 
         attendance_url = "http://rit.ac.in/ritsoft/ritsoftv2/student/parent_monthly.php"
-        attendance_payload = {"date1" : date.today() + relativedelta(months=-6), "date2" : date.today(), "btnshow-new" : ""}
+        attendance_payload = {"date1" : starting_date, "date2" : ending_date, "btnshow-new" : ""}
 
         html_page = requests.post(attendance_url, attendance_payload, cookies={"PHPSESSID" : cookie}).text
         soup = BeautifulSoup(html_page, "html.parser")
 
         if soup.script.string == "alert('Session Expired!!! Please login')" :
             raise HTTPException(status_code=401, detail="Invalid username or password")
+        elif soup.script.string == "alert('Data not Found')":
+            raise HTTPException(status_code=404, detail="Attendance data not found")
         else:
             name = soup.find("table").find_all("td")[0].string
             admission_no = soup.find("table").find_all("td")[1].string
@@ -51,7 +62,7 @@ class Scrapper():
                 subject_attendance.append({"subject_name" : subject_name, "subject_code" : subject_code, "total_hours" : total_hours, "present_hours" : present_hours, "percentage" : percentage})
 
             if not subject_attendance:
-                raise HTTPException(status_code=404, detail="No attendance record found")
+                raise HTTPException(status_code=404, detail="Attendance data not found")
 
             total_attendance = rows[len(rows) - 1].find_all("td")[1].string
             response_json["subject_attendance"] = subject_attendance
