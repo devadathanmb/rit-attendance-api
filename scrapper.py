@@ -6,39 +6,41 @@ from dateutil.relativedelta import relativedelta
 
 class Scrapper():
     
-    # Login and generate a cookie
+    # Login and set a cookie
     def login(self, username, password):
         login_url = "http://rit.ac.in/ritsoft/ritsoftv2/login.php"
         login_payload = {"username" : username, "password" : password, "login" : "Login"}
         try:
-            response_cookie = requests.post(login_url, login_payload).cookies["PHPSESSID"]
+            response = requests.post(login_url, login_payload)
+            response_cookie = response.cookies["PHPSESSID"]
+            response_html = response.text
+            soup = BeautifulSoup(response_html, "html.parser")
+            script_tags = soup.find_all("script")
+            for tag in script_tags:
+                if tag.string == "alert('Incorrect username or password')" :
+                   raise HTTPException(status_code=401, detail="Invalid username or password.")
         except requests.Timeout:
-            raise HTTPException(status_code=500, detail="RIT Soft server timed out. Try again later")
+            raise HTTPException(status_code=500, detail="RIT Soft server timed out. Try again later.")
         return response_cookie
     
     # Scrape the attendance data
     def scrape_attendance(self, cookie, starting_date, ending_date):
-
-        if starting_date == None and ending_date == None:
-            ending_date = date.today()
-            starting_date = date.today() + relativedelta(months=-6)
-        if ending_date == None:
-            ending_date = date.today()
-        elif starting_date == None:
-            starting_date = date.today() + relativedelta(months=-6)
-
         response_json = {}
 
         attendance_url = "http://rit.ac.in/ritsoft/ritsoftv2/student/parent_monthly.php"
         attendance_payload = {"date1" : starting_date, "date2" : ending_date, "btnshow-new" : ""}
 
-        html_page = requests.post(attendance_url, attendance_payload, cookies={"PHPSESSID" : cookie}).text
+        try:
+            html_page = requests.post(attendance_url, attendance_payload, cookies={"PHPSESSID" : cookie}).text
+        except requests.Timeout:
+            raise HTTPException(status_code=500, detail="RIT Soft server timed out. Try again later.")
         soup = BeautifulSoup(html_page, "html.parser")
 
         if soup.script.string == "alert('Session Expired!!! Please login')" :
-            raise HTTPException(status_code=401, detail="Invalid username or password")
+            raise HTTPException(status_code=440, detail="Session expired. Please log in again.")
         elif soup.script.string == "alert('Data not Found')":
-            raise HTTPException(status_code=404, detail="Attendance data not found")
+            print(html_page)
+            raise HTTPException(status_code=404, detail="Attendance data not found.")
         else:
             name = soup.find("table").find_all("td")[0].string
             admission_no = soup.find("table").find_all("td")[1].string
@@ -62,7 +64,7 @@ class Scrapper():
                 subject_attendance.append({"subject_name" : subject_name, "subject_code" : subject_code, "total_hours" : total_hours, "present_hours" : present_hours, "percentage" : percentage})
 
             if not subject_attendance:
-                raise HTTPException(status_code=404, detail="Attendance data not found")
+                raise HTTPException(status_code=404, detail="Attendance data not found.")
 
             total_attendance = rows[len(rows) - 1].find_all("td")[1].string
             response_json["subject_attendance"] = subject_attendance
