@@ -10,13 +10,13 @@ Attendance API helps you grab your attendance details from RIT Soft quickly and 
 
 ## What can this API do?
 
-This API can do whatever things you can do in RIT Soft basically. But currently only specific endpoints are implemented.  
+This API can do :
 
-As of now the you will be able to :
-
-* **Login** remotely
+* **Login remotely**
 * **View basic student information**
 * **Get attendance details of your current semester**
+* **Get detailed attendance details including absent and present dates(_not implemented_)**
+* **View last updated attendance dates of for subjects(_Not implemented_)**
 
 """
 
