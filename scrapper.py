@@ -63,31 +63,32 @@ class Scrapper():
             print(html_page)
             raise HTTPException(status_code=404, detail="Attendance data not found.")
         else:
-            name = soup.find("table").find_all("td")[0].string
-            admission_no = soup.find("table").find_all("td")[1].string
-            course_name = soup.find("table").find_all("td")[2].string
+            try:
+                name = soup.find("table").find_all("td")[0].string
+                admission_no = soup.find("table").find_all("td")[1].string
+                course_name = soup.find("table").find_all("td")[2].string
 
-            if None in (name, admission_no, course_name):
+            except IndexError:
                 raise HTTPException(status_code=404, detail="Could not find data.")
 
             response_json["name"] = name
             response_json["admission_no"] = admission_no
             response_json["course_name"] = course_name
 
-            rows = (soup.body.find_all("table", class_ = "table table-bordered table-hover")[0].tbody.find_all("tr"))
-            subject_attendance = []
-            for i in range(len(rows) - 1): 
-                subject_name = rows[i].find_all("td")[0].find(text=True, recursive=False)
-                subject_code = rows[i].find_all("td")[0].sub.text
-                total_hours = rows[i].find_all("td")[1].text
-                present_hours = rows[i].find_all("td")[2].text
-                percentage = rows[i].find_all("td")[3].text
-                subject_attendance.append({"subject_name" : subject_name, "subject_code" : subject_code, "total_hours" : total_hours, "present_hours" : present_hours, "percentage" : percentage})
-
-            if not subject_attendance:
+            try:
+                rows = (soup.body.find_all("table", class_ = "table table-bordered table-hover")[0].tbody.find_all("tr"))
+                subject_attendance = []
+                for i in range(len(rows) - 1): 
+                    subject_name = rows[i].find_all("td")[0].find(text=True, recursive=False)
+                    subject_code = rows[i].find_all("td")[0].sub.text
+                    total_hours = rows[i].find_all("td")[1].text
+                    present_hours = rows[i].find_all("td")[2].text
+                    percentage = rows[i].find_all("td")[3].text
+                    subject_attendance.append({"subject_name" : subject_name, "subject_code" : subject_code, "total_hours" : total_hours, "present_hours" : present_hours, "percentage" : percentage})
+                total_attendance = rows[len(rows) - 1].find_all("td")[1].string
+            except IndexError:
                 raise HTTPException(status_code=404, detail="Attendance data not found.")
 
-            total_attendance = rows[len(rows) - 1].find_all("td")[1].string
             response_json["subject_attendance"] = subject_attendance
             response_json["total_attendance"] = total_attendance
 
