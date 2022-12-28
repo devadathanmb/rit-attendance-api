@@ -23,10 +23,13 @@ This API can do :
 tags_metadata = [
     {
         "name": "status",
-        "description": "Check the status of the API. If it's alive or not.",
+        "description": "To check the status of the API.",
     },
-    {"name": "login", "description": "Allows you to login."},
-    {"name": "attendance", "description": "View attendance details (after logging in)"},
+    {"name": "login", "description": "To login."},
+    {
+        "name": "attendance",
+        "description": "To view attendance details (_after logging in_)",
+    },
 ]
 
 app = FastAPI(
@@ -40,21 +43,41 @@ class User(BaseModel):
     password: str
 
 
-@app.get("/", tags=["status"])
+@app.get(
+    "/",
+    tags=["status"],
+    summary="Check status of API",
+    response_description="Returns a json object with alive = true on success",
+)
 def is_alive():
     return {"alive": "yes"}
 
 
-@app.get("/login", tags=["login"])
-def is_logged_in(session_cookie: str = Cookie(None)):
+@app.get(
+    "/login",
+    tags=["login"],
+    summary="Check logged in status",
+    response_description="Returns a json object with basic student details on success",
+)
+def is_logged_in(
+    session_cookie: str = Cookie(None),
+):
     if not session_cookie:
         raise HTTPException(status_code=401, detail="You are not logged in.")
     else:
         return scrapper.check_login(session_cookie)
 
 
-@app.post("/login", tags=["login"])
-def login(response: Response, user: User):
+@app.post(
+    "/login",
+    tags=["login"],
+    summary="Log in and generate a cookie",
+    response_description="Returns a json object with a cookie on success",
+)
+def login(
+    response: Response,
+    user: User,
+):
     cookie = scrapper.login(user.username, user.password)
     response.set_cookie(key="session_cookie", value=cookie)
     return {
@@ -63,7 +86,12 @@ def login(response: Response, user: User):
     }
 
 
-@app.get("/attendance", tags=["attendance"])
+@app.get(
+    "/attendance",
+    tags=["attendance"],
+    summary="View attendance details",
+    response_description="Returns a json object with basic student details and attendance details of the student on success",
+)
 def get_attendance(
     session_cookie: str = Cookie(None),
     starting_date: date = date.today() + relativedelta(months=-6),
@@ -77,8 +105,15 @@ def get_attendance(
         return scrapper.scrape_attendance(session_cookie, starting_date, ending_date)
 
 
-@app.get("/attendance/lastupdate", tags=["attendance"])
-def get_last_update(session_cookie: str = Cookie(None)):
+@app.get(
+    "/attendance/lastupdate",
+    tags=["attendance"],
+    summary="View last attendance update details",
+    response_description="Returns a json object with subjects and their last attendance update details on success",
+)
+def get_last_update(
+    session_cookie: str = Cookie(None),
+):
     if not session_cookie:
         raise HTTPException(
             status_code=401, detail="Not logged in. Please log in and try again."
