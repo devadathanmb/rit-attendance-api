@@ -16,6 +16,13 @@ class User(BaseModel):
 def is_alive():
     return {"alive": "yes"}
 
+@app.get("/login")
+def is_logged_in(session_cookie: str = Cookie(None)):
+    if not session_cookie:
+        raise HTTPException(status_code=401, detail = "You are not logged in.")
+    else:
+        return scrapper.check_login(session_cookie)
+    
 @app.post("/login")
 def login(response: Response, user: User):
     cookie = scrapper.login(user.username, user.password)

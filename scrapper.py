@@ -22,6 +22,27 @@ class Scrapper():
         except requests.Timeout:
             raise HTTPException(status_code=500, detail="RIT Soft server timed out. Try again later.")
         return response_cookie
+
+    # Check login
+    def check_login(self, cookie):
+        student_details_url = "http://rit.ac.in/ritsoft/ritsoftv2/student/current_semester.php"
+        response_json = {}
+        try:
+            response_html = requests.get(student_details_url, cookies={"PHPSESSID" : cookie}).text
+            print(response_html)
+            soup = BeautifulSoup(response_html, "html.parser")
+            table_data = soup.find("form").find_all("td")
+            response_json["admission_no"] = table_data[0].text
+            response_json["current_semester"] = table_data[1].text
+            response_json["roll_no"] = table_data[2].text
+            response_json["current_status"] = table_data[3].text
+            response_json["message"] = "You are already logged in."
+
+            return response_json
+        except requests.Timeout:
+            raise HTTPException(status_code=500, detail="RIT Soft server timed out. Try again later.")
+        except IndexError:
+            raise HTTPException(status_code=404, detail="No data found")
     
     # Scrape the attendance data
     def scrape_attendance(self, cookie, starting_date, ending_date):
