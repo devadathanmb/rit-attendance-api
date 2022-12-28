@@ -75,3 +75,13 @@ def get_attendance(
         )
     else:
         return scrapper.scrape_attendance(session_cookie, starting_date, ending_date)
+
+
+@app.get("/attendance/lastupdate", tags=["attendance"])
+def get_last_update(session_cookie: str = Cookie(None)):
+    if not session_cookie:
+        raise HTTPException(
+            status_code=401, detail="Not logged in. Please log in and try again."
+        )
+    else:
+        return scrapper.scrape_last_update(session_cookie)
