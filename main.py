@@ -15,7 +15,7 @@ This API can do :
 * **Login remotely**
 * **View basic student information**
 * **Get attendance details of your current semester**
-* **View last updated attendance dates of for subjects**
+* **View last updated attendance dates of subjects**
 * **Get detailed attendance details including absent and present dates(_not implemented_)**
 
 """
