@@ -14,8 +14,8 @@ For detailed documetation of this API, take a look at https://attendance-api.onr
 > <summary> GET / : To check the status of the API</summary>
 > 
 > <br>
-> Parameters : None
->
+> Parameters : None  
+> 
 > Example response : 
 > ```json
 > {
