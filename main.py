@@ -50,7 +50,10 @@ class User(BaseModel):
     response_description="Returns a json object with alive = true on success",
 )
 def is_alive():
-    return {"alive": "yes"}
+    return {
+        "alive": "yes",
+        "message": "Check out https://attendance-api.onrender.com/docs for more details",
+    }
 
 
 @app.get(
