@@ -38,8 +38,12 @@ class Scrapper:
             response_html = requests.get(
                 student_details_url, cookies={"PHPSESSID": cookie}
             ).text
-            print(response_html)
             soup = BeautifulSoup(response_html, "html.parser")
+            if soup.script.string == "alert('Session Expired!!! Please login')":
+                raise HTTPException(
+                    status_code=440, detail="Session expired. Please log in again."
+                )
+
             table_data = soup.find("form").find_all("td")
             response_json["admission_no"] = table_data[0].text
             response_json["current_semester"] = table_data[1].text
@@ -194,4 +198,3 @@ class Scrapper:
                 raise HTTPException(
                     status_code=404, detail="Last update data not found."
                 )
-
