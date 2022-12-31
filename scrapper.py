@@ -128,8 +128,8 @@ class Scrapper:
                     status_code=404, detail="Attendance data not found."
                 )
 
-            response_json["subject_attendance"] = subject_attendance
             response_json["total_attendance"] = total_attendance
+            response_json["subject_attendance"] = subject_attendance
 
             return response_json
 
