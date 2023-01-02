@@ -192,6 +192,7 @@ class Scrapper:
                             response_json[code]["last_update"] = row.find_all("td")[
                                 1
                             ].text
+                            break
                 return response_json
 
             except IndexError:
