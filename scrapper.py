@@ -85,7 +85,6 @@ class Scrapper:
                 status_code=440, detail="Session expired. Please log in again."
             )
         elif soup.script.string == "alert('Data not Found')":
-            print(html_page)
             raise HTTPException(status_code=404, detail="Attendance data not found.")
         else:
             try:
@@ -163,7 +162,6 @@ class Scrapper:
                 status_code=440, detail="Session expired. Please log in again."
             )
         elif soup.script.string == "alert('Data not Found')":
-            print(html_page)
             raise HTTPException(status_code=404, detail="Attendance data not found.")
         else:
             try:
