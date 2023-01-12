@@ -1,6 +1,6 @@
 # Attendance API
 
-An API to view and get attendance details from [RIT Soft](http://rit.ac.in/ritsoft/ritsoftv2/) easily.
+An unofficial API to view and get attendance details from [RIT Soft](http://rit.ac.in/ritsoft/ritsoftv2/) easily.
 
 **The endpoint is at https://attendance-api.onrender.com/**
 
