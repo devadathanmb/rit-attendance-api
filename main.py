@@ -82,7 +82,7 @@ def login(
     user: User,
 ):
     cookie = scrapper.login(user.username, user.password)
-    response.set_cookie(key="session_cookie", value=cookie)
+    response.set_cookie(key="session_cookie", value=cookie, httponly=True)
     return {
         "message": "Login success. Cookie has been set successfully.",
         "session-cookie": cookie,
