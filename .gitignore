@@ -1,3 +1,4 @@
 attendance_bot_api_env/
 __pycache__/*
 todo.md
+.venv/
