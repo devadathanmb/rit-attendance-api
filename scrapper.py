@@ -232,7 +232,7 @@ class Scrapper:
                     "table", class_="table table-bordered table-hover"
                 )[1].tbody.find_all("tr")
 
-                if rows == None or rows.length == 1:
+                if rows == None or len(rows) == 1:
                     raise HTTPException(
                         status_code=404,
                         detail="Either data not updated or you were not absent for any hours",
@@ -245,7 +245,6 @@ class Scrapper:
                     subject_name = cols[3].find(text=True, recursive=False)
                     subject_code = cols[3].find("sub").string
                     status = cols[4].string
-                    print(status)
 
                     if status == "PRESENT":
                         continue
