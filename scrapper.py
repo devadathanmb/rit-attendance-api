@@ -235,7 +235,7 @@ class Scrapper:
                 if rows == None or len(rows) == 1:
                     raise HTTPException(
                         status_code=404,
-                        detail="Either data not updated or you were not absent for any hours",
+                        detail="Attendance data not found",
                     )
 
                 for row in rows:
@@ -258,6 +258,8 @@ class Scrapper:
                             "status": status,
                         }
                     )
+                if len(response_json) == 0:
+                    HTTPException(status_code=404, detail="No absent hours")
                 return response_json
 
             except IndexError:
