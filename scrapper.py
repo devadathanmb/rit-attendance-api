@@ -6,7 +6,6 @@ from dateutil.relativedelta import relativedelta
 
 
 class Scrapper:
-
     # Login and set a cookie
     def login(self, username, password):
         login_url = "http://rit.ac.in/ritsoft/ritsoftv2/login.php"
@@ -134,7 +133,6 @@ class Scrapper:
 
     # Scrape last update
     def scrape_last_update(self, cookie):
-
         response_json = {}
 
         starting_date = date.today() + relativedelta(months=-6)
@@ -197,3 +195,71 @@ class Scrapper:
                 raise HTTPException(
                     status_code=404, detail="Last update data not found."
                 )
+
+    # Scrape absent details
+    def scrape_absent(self, cookie):
+        response_json = []
+
+        starting_date = date.today() + relativedelta(months=-6)
+        ending_date = date.today()
+
+        attendance_url = "http://rit.ac.in/ritsoft/ritsoftv2/student/parent_monthly.php"
+        attendance_payload = {
+            "date1": starting_date,
+            "date2": ending_date,
+            "btnshow-new": "",
+        }
+
+        try:
+            html_page = requests.post(
+                attendance_url, attendance_payload, cookies={"PHPSESSID": cookie}
+            ).text
+        except requests.Timeout:
+            raise HTTPException(
+                status_code=500, detail="RIT Soft server timed out. Try again later."
+            )
+        soup = BeautifulSoup(html_page, "html.parser")
+
+        if soup.script.string == "alert('Session Expired!!! Please login')":
+            raise HTTPException(
+                status_code=440, detail="Session expired. Please log in again."
+            )
+        elif soup.script.string == "alert('Data not Found')":
+            raise HTTPException(status_code=404, detail="Absent data not found.")
+        else:
+            try:
+                rows = soup.body.find_all(
+                    "table", class_="table table-bordered table-hover"
+                )[1].tbody.find_all("tr")
+
+                if rows == None or rows.length == 1:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Either data not updated or you were not absent for any hours",
+                    )
+
+                for row in rows:
+                    cols = row.find_all("td")
+                    attendance_date = cols[1].string
+                    hour = cols[2].string
+                    subject_name = cols[3].find(text=True, recursive=False)
+                    subject_code = cols[3].find("sub").string
+                    status = cols[4].string
+                    print(status)
+
+                    if status == "PRESENT":
+                        continue
+
+                    response_json.append(
+                        {
+                            "subject_name": subject_name,
+                            "subject_code": subject_code,
+                            "absent_date": attendance_date,
+                            "absent_hour": hour,
+                            "status": status,
+                        }
+                    )
+                return response_json
+
+            except IndexError:
+                raise HTTPException(status_code=404, detail="Absent data not found")

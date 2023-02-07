@@ -123,3 +123,18 @@ def get_last_update(
         )
     else:
         return scrapper.scrape_last_update(session_cookie)
+
+
+@app.get(
+    "/attendance/absent",
+    tags=["attendance"],
+    summary="View absent hours",
+    response_description="Returns a json object with absent dates and details on success",
+)
+def get_absent_hours(session_cookie: str = Cookie(None)):
+    if not session_cookie:
+        raise HTTPException(
+            status_code=401, detail="Not logged in. Please log in and try again."
+        )
+    else:
+        return scrapper.scrape_absent(session_cookie)
