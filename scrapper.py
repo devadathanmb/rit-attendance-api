@@ -322,8 +322,8 @@ class Scrapper:
                         {
                             "subject_name": subject_name,
                             "subject_code": subject_code,
-                            "absent_date": attendance_date,
-                            "absent_hour": hour,
+                            "present_date": attendance_date,
+                            "present_date": hour,
                             "status": status,
                         }
                     )
