@@ -138,3 +138,18 @@ def get_absent_hours(session_cookie: str = Cookie(None)):
         )
     else:
         return scrapper.scrape_absent(session_cookie)
+
+@app.get(
+    "/attendance/present",
+    tags=["attendance"],
+    summary="View present hours",
+    response_description="Returns a json object with present dates and details on success",
+)
+def get_absent_hours(session_cookie: str = Cookie(None)):
+    if not session_cookie:
+        raise HTTPException(
+            status_code=401, detail="Not logged in. Please log in and try again."
+        )
+    else:
+        return scrapper.scrape_present(session_cookie)
+
