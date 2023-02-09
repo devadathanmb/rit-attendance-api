@@ -323,7 +323,7 @@ class Scrapper:
                             "subject_name": subject_name,
                             "subject_code": subject_code,
                             "present_date": attendance_date,
-                            "present_date": hour,
+                            "present_hour": hour,
                             "status": status,
                         }
                     )
