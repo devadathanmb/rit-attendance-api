@@ -150,6 +150,96 @@ For detailed documetation of this API, take a look at https://attendance-api.onr
 
 <br>
 
+> <details>
+> <summary>GET /attendance/absent : To get absent dates and details</summary>
+> 
+> <br>
+> 
+> Parameters : session_cookie (cookie)  
+> <br>
+> Example response :
+> ```json
+> [
+>   {
+>     "subject_name": "SYSTEM SOFTWARE ",
+>     "subject_code": "CST305",
+>     "absent_date": "29, Dec 2022 Thu",
+>     "absent_hour": "1",
+>     "status": "ABSENT"
+>   },
+>   {
+>     "subject_name": "SYSTEM SOFTWARE ",
+>     "subject_code": "CST305",
+>     "absent_date": "24, Nov 2022 Thu",
+>     "absent_hour": "1",
+>     "status": "ABSENT"
+>   },
+>   {
+>     "subject_name": "MANAGEMENT OF SOFTWARE SYSTEMS ",
+>     "subject_code": "CST309",
+>     "absent_date": "31, Oct 2022 Mon",
+>     "absent_hour": "6",
+>     "status": "ABSENT"
+>   },
+>   {
+>     "subject_name": "SYSTEM SOFTWARE ",
+>     "subject_code": "CST305",
+>     "absent_date": "31, Oct 2022 Mon",
+>     "absent_hour": "5",
+>     "status": "ABSENT"
+>   },
+>   {
+>     "subject_name": "MANAGEMENT OF SOFTWARE SYSTEMS ",
+>     "subject_code": "CST309",
+>     "absent_date": "29, Oct 2022 Sat",
+>     "absent_hour": "6",
+>     "status": "ABSENT"
+>   }
+> ] ```
+> </details>
+
+<br>
+
+> <details>
+> <summary>GET /attendance/present : To get present hours and details </summary>
+> 
+> <br>
+> 
+> Parameters : session_cookie (cookie)  
+> <br>
+> Example response :
+> ```json
+> [
+>   {
+>     "subject_name": "SYSTEM SOFTWARE ",
+>     "subject_code": "CST305",
+>     "present_date": "26, Dec 2022 Mon",
+>     "present_hour": "5",
+>     "status": "PRESENT"
+>   },
+>   {
+>     "subject_name": "MANAGEMENT OF SOFTWARE SYSTEMS ",
+>     "subject_code": "CST309",
+>     "present_date": "21, Dec 2022 Wed",
+>     "present_hour": "3",
+>     "status": "PRESENT"
+>   },
+>   {
+>     "subject_name": "SYSTEM SOFTWARE ",
+>     "subject_code": "CST305",
+>     "present_date": "21, Dec 2022 Wed",
+>     "present_hour": "5",
+>     "status": "PRESENT"
+>   }
+> ]```
+>
+</details>
+
+<br>
+
+
+
+
 *Note that this API returns data after scraping the website, so potential bugs may be present.*  
 <br>
 *Also not that since this API is hosted on [render](https://render.com/docs) the initial request after a period of inactivity might take some time to process.*
