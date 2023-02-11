@@ -195,7 +195,8 @@ For detailed documetation of this API, take a look at https://attendance-api.onr
 >     "absent_hour": "6",
 >     "status": "ABSENT"
 >   }
-> ] ```
+> ] 
+> ```
 > </details>
 
 <br>
@@ -231,9 +232,9 @@ For detailed documetation of this API, take a look at https://attendance-api.onr
 >     "present_hour": "5",
 >     "status": "PRESENT"
 >   }
-> ]```
->
-</details>
+> ]
+> ```
+> </details>
 
 <br>
 
