@@ -16,7 +16,8 @@ This API can do :
 * **View basic student information**
 * **Get attendance details of your current semester**
 * **View last updated attendance dates of subjects**
-* **Get detailed attendance details including absent and present dates(_not implemented_)**
+* **Get absent details**
+* **Get present details**
 
 """
 
