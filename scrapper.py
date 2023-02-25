@@ -12,6 +12,11 @@ class Scrapper:
         login_payload = {"username": username, "password": password, "login": "Login"}
         try:
             response = requests.post(login_url, login_payload)
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=500,
+                    detail="There's something wrong with the RIT Soft server. Please try again later",
+                )
             response_cookie = response.cookies["PHPSESSID"]
             response_html = response.text
             soup = BeautifulSoup(response_html, "html.parser")
