@@ -2,7 +2,9 @@
 
 An unofficial API to view and get attendance details from [RIT Soft](http://rit.ac.in/ritsoft/ritsoftv2/) easily.
 
-**The endpoint is at https://attendance-api.onrender.com/**
+**The endpoint is at https://attendance-api.onrender.com/**  
+
+**Check status of API here https://stats.uptimerobot.com/jWyn8flnWm**
 
 ## API Documentation
 
@@ -243,4 +245,3 @@ For detailed documetation of this API, take a look at https://attendance-api.onr
 
 *Note that this API returns data after scraping the website, so potential bugs may be present.*  
 <br>
-*Also not that since this API is hosted on [render](https://render.com/docs) the initial request after a period of inactivity might take some time to process.*
